@@ -4,7 +4,7 @@
 
 第一次才需要`build docker image`，build完後可推至私庫。
 
-[Dockerfile](Dockfile)
+[Dockerfile](Dockerfile)
 
 此`image` 基底為`maven:3.5-jdk-7-alpine`，內建`maven`及`jdk7`
 可自行調整`jdk`版本，並額外加裝了

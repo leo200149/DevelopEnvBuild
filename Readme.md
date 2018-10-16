@@ -1,13 +1,13 @@
 # 用DOCKER搭設CI環境
 
-在/etc/hosts檔中加入
+在`/etc/hosts`檔中加入 `ip`自行修改
 
 ```bash
-192.168.1.101 mydomain.dev.com
-192.168.1.101 mydomain.dev.gitlab.com
-192.168.1.101 mydomain.dev.nexus.com
-192.168.1.101 mydomain.dev.redmine.com
-192.168.1.101 mydocker.com
+192.168.1.111 mydomain.dev.com
+192.168.1.111 mydomain.dev.gitlab.com
+192.168.1.111 mydomain.dev.nexus.com
+192.168.1.111 mydomain.dev.redmine.com
+192.168.1.111 mydocker.com
 ```
 
 目前使用`docker`建立服務如下

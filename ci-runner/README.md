@@ -103,7 +103,7 @@ docker exec -it my-runner \
 
 ### 在專案根目錄加入 .gitlab-ci.yml 並 push
 
-參考 [gitlab_ci_example](gitlab_ci_yml_example\.gitlab-ci.yml)
+參考 [gitlab_ci_example](gitlab_ci_yml_example/.gitlab-ci.yml)
 
 ### 檢查
 

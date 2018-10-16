@@ -43,7 +43,7 @@ nginx
 
 ## 設定conf
 
-`nginx.conf`內`IP`位置需調整
+`nginx.conf`內`IP`位置需調整
 
 [nginx.conf](nginx/nginx.conf)
 [server/gitlab.conf](nginx/server/gitlab.conf)

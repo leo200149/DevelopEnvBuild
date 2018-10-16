@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# gitlab-runner data directory
+DATA_DIR="/etc/gitlab-runner"
+CONFIG_FILE=${CONFIG_FILE:-$DATA_DIR/config.toml}
+# custom certificate authority path
+CA_CERTIFICATES_PATH=${CA_CERTIFICATES_PATH:-$DATA_DIR/certs/ca.crt}
+LOCAL_CA_PATH="/usr/local/share/ca-certificates/ca.crt"
+
+GITLAB_CI_RUNNER_USER=gitlab-runner
+GITLAB_CI_RUNNER_HOME_DIR=/home/gitlab-runner
+GITLAB_CI_RUNNER_DATA_DIR=/home/gitlab-runner/data
+
+update_ca() {
+  echo "Updating CA certificates..."
+  cp "${CA_CERTIFICATES_PATH}" "${LOCAL_CA_PATH}"
+  update-ca-certificates --fresh >/dev/null
+}
+
+generate_ssh_deploy_keys() {
+  sudo -HEu ${GITLAB_CI_RUNNER_USER} mkdir -p ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh/
+
+  if [[ ! -e ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh/id_rsa || ! -e ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh/id_rsa.pub ]]; then
+    echo "Generating SSH deploy keys..."
+    rm -rf ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh/id_rsa ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh/id_rsa.pub
+    sudo -HEu ${GITLAB_CI_RUNNER_USER} ssh-keygen -t rsa -N "" -f ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh/id_rsa
+
+  fi
+
+  echo ""
+  echo -n "Your SSH deploy key is: "
+  echo "========"
+  cat ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh/id_rsa.pub
+  echo "========"
+  echo ""
+  chmod 600 ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh/id_rsa ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh/id_rsa.pub
+  chmod 700 ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh
+  chown -R ${GITLAB_CI_RUNNER_USER}:${GITLAB_CI_RUNNER_USER} ${GITLAB_CI_RUNNER_HOME_DIR}/.ssh
+
+  
+}
+
+setup_m2() {
+  chmod 700 ${GITLAB_CI_RUNNER_HOME_DIR}/.m2
+  chown -R ${GITLAB_CI_RUNNER_USER}:${GITLAB_CI_RUNNER_USER} ${GITLAB_CI_RUNNER_HOME_DIR}/.m2
+}
+
+generate_ssh_deploy_keys
+
+setup_m2
+
+if [ -f "${CA_CERTIFICATES_PATH}" ]; then
+  # update the ca if the custom ca is different than the current
+  cmp --silent "${CA_CERTIFICATES_PATH}" "${LOCAL_CA_PATH}" || update_ca
+fi
+
+# launch gitlab-runner passing all arguments
+echo 'run docker start'
+wrapdocker
+echo 'run docker end'
+echo launch gitlab-runner passing all arguments
+echo args=$@
+exec gitlab-runner "$@"

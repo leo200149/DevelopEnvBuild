@@ -1,0 +1,11 @@
+stages:
+  - build
+
+variables:
+  MAVEN_DEPLOY: "true"
+
+build_job:
+  stage: build
+  artifacts:
+    expire_in: 7d
+    script:     - echo "Start build project..."

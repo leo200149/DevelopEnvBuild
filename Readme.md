@@ -1,4 +1,4 @@
-# 測試機文件
+# 用DOCKER搭設CI環境
 
 在/etc/hosts檔中加入
 
